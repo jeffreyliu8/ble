@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 
+                macaddress = null;
+
                 //scan specified devices only with ScanFilter
                 ScanFilter scanFilter = new ScanFilter.Builder()
                         .setServiceUuid(ParcelUuid.fromString(Constant.UUID_SWYP_NORDIC_SERVICE))
