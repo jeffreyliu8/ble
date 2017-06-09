@@ -38,15 +38,6 @@ public class AndroidBluetoothEventReceiver extends BroadcastReceiver {
                 }
                 break;
             }
-            default:
-            case BluetoothDevice.ACTION_ACL_CONNECTED:
-            case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-            case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED: {
-                final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //Logger.d("onReceive() called with: action = [" + action + "], device = [" + device.getName() + "]");
-                EventBus.getDefault().post(new BleOsEvent(action));
-                break;
-            }
             case BluetoothDevice.ACTION_BOND_STATE_CHANGED: {
                 final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 //Logger.d("onReceive() called with: action = [" + action + "], device = [" + device.getName() + "]");
@@ -54,7 +45,7 @@ public class AndroidBluetoothEventReceiver extends BroadcastReceiver {
                 switch (bondState) {
                     case BluetoothDevice.BOND_BONDED:
                         Logger.d("onReceive: BOND_BONDED");
-                         EventBus.getDefault().post(new BleOsEvent(BLE_OS_EVENT_BOND_STATE_BONDED));
+                        EventBus.getDefault().post(new BleOsEvent(BLE_OS_EVENT_BOND_STATE_BONDED));
                         break;
                     case BluetoothDevice.BOND_BONDING:
                         Logger.d("onReceive: BOND_BONDING");

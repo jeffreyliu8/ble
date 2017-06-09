@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        startService(new Intent(this, QvCardService.class));
+        startService(new Intent(this, BleService.class));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 mBluetoothAdapter.getBluetoothLeScanner().startScan(scanFilters, scanSetting, mScanCallback);
-
             }
         });
     }
@@ -91,28 +90,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -123,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
-            Log.d(TAG, "onBatchScanResults() called with: results = [" + results + "]");
-            for (ScanResult sr : results) {
-                onScanCardFound(sr.getDevice());
-            }
+//            Log.d(TAG, "onBatchScanResults() called with: results = [" + results + "]");
+//            for (ScanResult sr : results) {
+//                onScanCardFound(sr.getDevice());
+//            }
         }
 
         @Override
@@ -155,19 +132,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private String macaddress = null;
+
     private synchronized void onScanCardFound(BluetoothDevice device) {
-        Log.d(TAG, "onLeScan: found " + device.getAddress() + " " + device.getName());
+        //Log.d(TAG, "onLeScan: found " + device.getAddress() + " " + device.getName());
+        if (macaddress != null)
+            return;
+
         if (!TextUtils.isEmpty(device.getName()) &&
                 device.getName().length() > 4 &&
-                device.getName().substring(0, 4).equalsIgnoreCase("swyp")) {
+                device.getName().substring(0, 4).equalsIgnoreCase("hoot")) {
             Logger.d("onLeScan: found " + device.getAddress() + " " + device.getName());
 
 
             mBluetoothAdapter.getBluetoothLeScanner().stopScan(mScanCallback);
 
+            macaddress = device.getAddress();
+            Intent i = new Intent(this, BleService.class);
+            i.putExtra(BleService.BLE_DEVICE, device);
 
-            boolean result = device.createBond();
-            Log.d(TAG, "onScanCardFound: " + result);
+            startService(i);
         }
     }
 
